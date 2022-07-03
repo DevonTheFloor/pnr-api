@@ -1,7 +1,7 @@
 const http = require('http'),
 api = require('./api'),
-apiPort = 5000,
-apiHost = '127.0.0.3' 
+apiPort = process.env.PNR_API_PORT,
+apiHost = process.env.PNR_API_HOSTNAME; 
 
 api.set('port', apiPort);
 const server = http.createServer(api);
