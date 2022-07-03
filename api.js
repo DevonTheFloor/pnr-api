@@ -2,8 +2,6 @@ const express = require('express'),
 api = express(),
 annRoutes = require('./routes/annonce'),
 helmet = require('helmet'),
-httpProxy = require('http-proxy'),
-proxy = httpProxy.createProxyServer(),
 mongoose = require('mongoose');
 
 mongoose.connect(process.env.PNR_DBS,
