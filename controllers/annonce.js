@@ -185,7 +185,7 @@ exports.postAnnonce = (req, res) => {
   console.log('req.post :', req.body)
     const annonce = new Annonce({
       ...req.body,
-      urlImg: process.env.DOMAIN_NAME+`/images/comp-${req.file.filename}`,
+      urlImg: process.env.DOMAIN_NAME+`/engin/images/comp-${req.file.filename}`,
       date: ladate.getDate()+"/"+(ladate.getMonth()+1)+"/"+ladate.getFullYear(),
       heure: ladate.getHours()+":"+ladate.getMinutes()+":"+ladate.getSeconds()
     })
