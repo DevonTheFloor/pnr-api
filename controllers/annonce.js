@@ -1,9 +1,8 @@
 const Annonce = require('../models/annonce'),
   compressImages = require('compress-images'),
   fs = require('fs'),
-  nMailer = require('nodemailer'),
-  pnrUrl = 'https://localhost:8443',
-  
+  nMailer = require('nodemailer');
+
   confirmMailing = (req, titre, mdp, id, mail) => {
   console.log('IN da MAILER')
   let transporter = nMailer.createTransport({
@@ -98,19 +97,20 @@ exports.getOne = (req, res) => {
 }
 
 exports.getRecherche = (req, res) => {
+  const reqArray = Object.values(req.body),
+    size = reqArray.length,
+    categorie = req.body.categorie,
+    objet = req.body.objet,
+    piece = req.body.piece,
+    region = req.body.region,
+    departement = req.body.departement,
+    marque = req.body.marque,
+    modele = req.body.modele,
+    annee = req.body.annee;
   console.log('req search :', req.body);
-  const reqArray = Object.values(req.body);
-  console.log('reqArray :',reqArray);
-  const size = reqArray.length;
   console.log('req search length :', size);
-  const categorie = req.body.categorie;
-  const objet = req.body.objet;
-  const piece = req.body.piece;
-  const region = req.body.region;
-  const departement = req.body.departement;
-  const marque = req.body.marque;
-  const modele = req.body.modele;
-  const annee = req.body.annee;
+  console.log('reqArray :',reqArray);
+
   const Recherche = {
     categorie: categorie,
     objet: objet,
@@ -142,11 +142,6 @@ exports.getRecherche = (req, res) => {
     }
     const findWithDetails = Annonce.find(
       {
-        /* categorie: req.body.categorie,
-        objet: req.body.objet,
-        piece: req.body.piece,
-        region: req.body.region,
-        departement: req.body.departement, */
         ...Recherche,
         $or: details
       });
@@ -190,25 +185,25 @@ exports.postAnnonce = (req, res) => {
   console.log('req.post :', req.body)
     const annonce = new Annonce({
       ...req.body,
-      urlImg: `${req.protocol}://${req.get('host')}/engin/images/comp-${req.file.filename}`,
+      urlImg: process.env.DOMAIN_NAME+`/images/comp-${req.file.filename}`,
       date: ladate.getDate()+"/"+(ladate.getMonth()+1)+"/"+ladate.getFullYear(),
       heure: ladate.getHours()+":"+ladate.getMinutes()+":"+ladate.getSeconds()
     })
     annonce.save()
     .then( (annonce) => {
       compressPhoto(req, res);
-      const apres = Date.now();
-      const delFile = `./temp/${req.file.filename}`;
-      const mdp = req.body.mdp;
-      const titre = req.body.titre;
+      const apres = Date.now(),
+        delFile = `./temp/${req.file.filename}`,
+        mdp = req.body.mdp,
+        titre = req.body.titre,
+        mail = annonce.email,
+        aid = annonce._id;
       console.log('ID :', annonce._id);
-      const mail = annonce.email;
       console.log('Mail :', annonce.email);
       console.log('Mot de passe dans annonce :', mdp);
       console.log('url to del :', delFile);
       console.log('Apres compPhoto :', apres);
       console.log(' annonce_id :', annonce._id);
-      const aid = annonce._id;
       confirmMailing(req, titre, mdp, aid, mail)
       res.status(201).json({
         message: 'Votre annonce est bien enregistrée sur le site.\n Un email de confirmation vous a été envoyé.\nVérifiez dans le dossier SPAM si nécessaire.',
@@ -229,10 +224,10 @@ exports.postAnnonce = (req, res) => {
 }
 
 exports.delAnnonce = (req, res) => {
+  const id = req.body.id,
+    mdp = req.body.mdp;
   console.log('into del annonce');
-  const id = req.body.id;
   console.log('id :', id);
-  const mdp = req.body.mdp;
   console.log('mdp :', mdp);
   console.log('req :', req.body);
   Annonce.findOne({

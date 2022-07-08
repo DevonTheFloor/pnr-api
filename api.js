@@ -13,7 +13,7 @@ mongoose.connect(process.env.PNR_DBS,
 api.disable('x-powered-by');
 
 api.use(express.json());
-api.use('/engin/images/', express.static(__dirname + '/images'));
+api.use('/images/', express.static(__dirname + '/images'));
 api.use('/', annRoutes);
 
 
